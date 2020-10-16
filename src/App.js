@@ -63,40 +63,88 @@ class Text extends React.Component{
     render(){
         if(this.state.done){
             var s='.'+this.state.text,t='.'+this.state.userText,userOut=[],textOut=[],cpm=0;
-            var dp=Array(s.length).fill().map(()=>Array(t.length)),pre=Array(s.length).fill().map(()=>Array(t.length))
-            dp[0][0]=[0,0];
-            for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++) for(let k=0;k<2;k++){
-                if(k==0&&!(i==0&&j==0)){
-                    dp[i][j]=[-1e9,-1e9];
-                    pre[i][j]=[0,0];
+            if(s.length*t.length<=4194304){
+                var dp=Array(s.length).fill().map(()=>Array(t.length)),pre=Array(s.length).fill().map(()=>Array(t.length));
+                dp[0][0]=[0,0];
+                for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++) for(let k=0;k<2;k++){
+                    if(k==0&&!(i==0&&j==0)){
+                        dp[i][j]=[-1e9,-1e9];
+                        pre[i][j]=[0,0];
+                    }
+                    if(i>0&&dp[i][j][0]<dp[i-1][j][k]){
+                        dp[i][j][0]=dp[i-1][j][k]; pre[i][j][0]=2+10*k;
+                    }
+                    if(j>0&&dp[i][j][0]<dp[i][j-1][k]){
+                        dp[i][j][0]=dp[i][j-1][k]; pre[i][j][0]=1+10*k;
+                    }
+                    if(i>0&&j>0&&s[i]==t[j]&&dp[i][j][1]<dp[i-1][j-1][k]+1+(k-1)){
+                        dp[i][j][1]=dp[i-1][j-1][k]+1+(k-1); pre[i][j][1]=0+10*k;
+                    }
                 }
-                if(i>0&&dp[i][j][0]<dp[i-1][j][k]){
-                    dp[i][j][0]=dp[i-1][j][k]; pre[i][j][0]=2+10*k;
+                for(let i=s.length-1,j=t.length-1,k=dp[i][j][0]>=dp[i][j][1]? 0:1,p=0;i>0||j>0;){
+                    p=pre[i][j][k]%10; k=pre[i][j][k]>=10? 1:0;
+                    if(p==0){
+                        textOut.push(<span className="highlight" key={i}>{s[i]}</span>);
+                        userOut.push(<span className="highlight" key={j}>{t[j]}</span>);
+                        i--; j--; cpm++;
+                    }
+                    else if(p==1){
+                        userOut.push(<span key={j}>{t[j]}</span>);
+                        j--;
+                    }
+                    else{
+                        textOut.push(<span key={i}>{s[i]}</span>);
+                        i--;
+                    }
                 }
-                if(j>0&&dp[i][j][0]<dp[i][j-1][k]){
-                    dp[i][j][0]=dp[i][j-1][k]; pre[i][j][0]=1+10*k;
-                }
-                if(i>0&&j>0&&s[i]==t[j]&&dp[i][j][1]<dp[i-1][j-1][k]+1+(k-1)){
-                    dp[i][j][1]=dp[i-1][j-1][k]+1+(k-1); pre[i][j][1]=0+10*k;
-                }
+                textOut=textOut.reverse(); userOut=userOut.reverse();
             }
-            for(let i=s.length-1,j=t.length-1,k=dp[i][j][0]>=dp[i][j][1]? 0:1,p=0;i>0||j>0;){
-                p=pre[i][j][k]%10; k=pre[i][j][k]>=10? 1:0;
-                if(p==0){
-                    textOut.push(<span className="highlight" key="i">{s[i]}</span>);
-                    userOut.push(<span className="highlight" key="i">{t[j]}</span>);
-                    i--; j--; cpm++;
+            else{
+                for(let ii=1,jj=1;ii<s.length;ii+=10){
+                    var s1='.'+s.substr(ii,10),t1='.'+t.substr(jj,15),textOut1=[],userOut1=[],first=1; console.log(s1,t1);
+                    var dp=Array(s1.length).fill().map(()=>Array(t1.length)),pre=Array(s1.length).fill().map(()=>Array(t1.length));
+                    dp[0][0]=[0,0];
+                    for(let i=0;i<s1.length;i++) for(let j=0;j<t1.length;j++) for(let k=0;k<2;k++){
+                        if(k==0&&!(i==0&&j==0)){
+                            dp[i][j]=[-1e9,-1e9];
+                            pre[i][j]=[0,0];
+                        }
+                        if(i>0&&dp[i][j][0]<dp[i-1][j][k]){
+                            dp[i][j][0]=dp[i-1][j][k]; pre[i][j][0]=2+10*k;
+                        }
+                        if(j>0&&dp[i][j][0]<dp[i][j-1][k]){
+                            dp[i][j][0]=dp[i][j-1][k]; pre[i][j][0]=1+10*k;
+                        }
+                        if(i>0&&j>0&&s1[i]==t1[j]&&dp[i][j][1]<dp[i-1][j-1][k]+1+(k-1)){
+                            dp[i][j][1]=dp[i-1][j-1][k]+1+(k-1); pre[i][j][1]=0+10*k;
+                        }
+                    }
+                    if(Math.max(dp[s1.length-1][t1.length-1][0],dp[s1.length-1][t1.length-1][0])<s1.length/2){
+                        for(let i=1;i<s1.length;i++) textOut.push(<span key={i+ii-1}>{s1[i]}</span>);
+                        continue;
+                    }
+                    for(let i=s1.length-1,j=t1.length-1,k=dp[i][j][0]>=dp[i][j][1]? 0:1,p=0;i>0||j>0;){
+                        p=pre[i][j][k]%10; k=pre[i][j][k]>=10? 1:0;
+                        if(p==0){
+                            textOut1.push(<span className="highlight" key={i+ii-1}>{s1[i]}</span>);
+                            userOut1.push(<span className="highlight" key={j+jj-1}>{t1[j]}</span>);
+                            i--; j--; cpm++;
+                            if(first==1) jj+=j+1;
+                            first=0;
+                        }
+                        else if(p==1){
+                            if(first==0) userOut1.push(<span key={j+jj-1}>{t1[j]}</span>);
+                            j--;
+                        }
+                        else{
+                            textOut1.push(<span key={i+ii-1}>{s1[i]}</span>);
+                            i--;
+                        }
+                    }
+                    textOut.push(textOut1.reverse()); userOut.push(userOut1.reverse());
                 }
-                else if(p==1){
-                    userOut.push(<span>{t[j]}</span>);
-                    j--;
-                }
-                else{
-                    textOut.push(<span>{s[i]}</span>);
-                    i--;
-                }
+
             }
-            textOut=textOut.reverse(); userOut=userOut.reverse();
             return(
                 <div className="main">
                     <p>Completed in {this.state.lastTime} seconds.</p>
@@ -112,6 +160,7 @@ class Text extends React.Component{
                         <h2>Your text</h2>
                         {userOut}
                     </div>
+                    <p>Note: if your text is over 2048 characters the matching algorithm may be less accurate to improve speed</p>
                     <hr/>
                     <button onClick={()=> this.reset()}>Reset</button>
                     <button onClick={()=> this.reset("random")}>Random Words</button>
