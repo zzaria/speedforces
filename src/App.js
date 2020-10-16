@@ -20,6 +20,7 @@ class Text extends React.Component{
             startTime: -1,
             done: 0,
             lastTime: -1,
+            tl: 60,
         }
     }
     componentDidMount(){
@@ -28,7 +29,7 @@ class Text extends React.Component{
     start(event){
         this.setState({userText:event.target.value});
         if(this.state.startTime==-1) this.setState({startTime:Date.now()});
-        else if(this.state.startTime+60000<Date.now()) this.end();
+        else if(this.state.startTime+this.state.tl*1000<Date.now()) this.end();
     }
     end(){
         if(this.state.lastTime==-1) this.setState({lastTime:(Date.now()-this.state.startTime)/1000});
@@ -50,6 +51,9 @@ class Text extends React.Component{
     }
     setText(event){
         this.setState({text:event.target.value});
+    }
+    setTL(event){
+        this.setState({tl:event.target.value});
     }
     render(){
         if(this.state.done){
@@ -121,8 +125,12 @@ class Text extends React.Component{
                 <button onClick={()=> this.reset("text")}>Text</button>
                 <button onClick={()=> this.reset("code")}>Code</button>
                 <label>
-                    <button onClick={()=> this.reset()}>Custom</button>
+                    Custom
                     <textarea className="customtext" value={this.state.text} onChange={(event) => this.setText(event)}/>
+                </label>
+                <label>
+                    Time limit (seconds)?
+                    <input className="tl" type="number" value={this.state.tl} onChange={(event) => this.setTL(event)}/>
                 </label>
                 <textarea className="input" value={this.state.userText} onChange={(event) => this.start(event)}/>
                 <button onClick={()=>this.end()}>Done</button>
