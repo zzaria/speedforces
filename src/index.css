@@ -28,6 +28,7 @@ body{
 	word-wrap: break-word;
 }
 p{
+	margin:0px;
 	white-space: pre-wrap;
 }
 .hidden {
@@ -99,7 +100,7 @@ footer a{
 .main{
 	margin:auto;
 	max-width:750px;
-	padding:80px 40px;
+	padding:70px 40px 30px 40px;
 }
 .input{
 	height: 15em;
@@ -125,4 +126,8 @@ footer a{
 label{
 	font-size: 14px;
 	padding:0px 5px;
+}
+.textbox{
+	max-height: 450px;
+	overflow-y:scroll;
 }
