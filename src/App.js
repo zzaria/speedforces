@@ -35,8 +35,8 @@ class Text extends React.Component{
         else if(this.state.startTime+this.state.tl*1000<Date.now()) this.end();
     }
     end(){
-        if(this.state.lastTime==-1) this.setState({lastTime:(Date.now()-this.state.startTime)/1000});
-        this.setState({done:1});
+        if(this.state.done==1) return;
+        this.setState({lastTime:(Date.now()-this.state.startTime)/1000,done:1});
     }
     reset(type){
         if(type=="random"){
@@ -60,9 +60,13 @@ class Text extends React.Component{
     }
     render(){
         if(this.state.done){
-            var s='.'+this.state.text,t='.'+this.state.userText,dp=Array(s.length).fill().map(()=>Array(t.length).fill().map(()=>Array(2).fill(-1e9))),pre=Array(s.length).fill().map(()=>Array(t.length).fill().map(()=>Array(2).fill(0))),userOut=[],textOut=[],cpm=0;
+            var s='.'+this.state.text,t='.'+this.state.userText,dp=Array(s.length).fill().map(()=>Array(t.length)),pre=Array(s.length).fill().map(()=>Array(t.length)),userOut=[],textOut=[],cpm=0;
             dp[0][0]=[0,0];
             for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++) for(let k=0;k<2;k++){
+                if(k==0&&!(i==0&&j==0)){
+                    dp[i][j]=[-1e9,-1e9];
+                    pre[i][j]=[0,0];
+                }
                 if(i>0&&dp[i][j][0]<dp[i-1][j][k]){
                     dp[i][j][0]=dp[i-1][j][k]; pre[i][j][0]=2+10*k;
                 }
