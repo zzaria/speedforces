@@ -129,6 +129,6 @@ label{
 	padding:0px 5px;
 }
 .textbox{
-	max-height: 450px;
+	max-height: 400px;
 	overflow-y:scroll;
 }
