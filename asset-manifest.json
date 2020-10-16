@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/speedforces/static/css/main.afe6ed15.chunk.css",
-    "main.js": "/speedforces/static/js/main.2ae2ddb0.chunk.js",
-    "main.js.map": "/speedforces/static/js/main.2ae2ddb0.chunk.js.map",
+    "main.css": "/speedforces/static/css/main.368faaa3.chunk.css",
+    "main.js": "/speedforces/static/js/main.1a55bc26.chunk.js",
+    "main.js.map": "/speedforces/static/js/main.1a55bc26.chunk.js.map",
     "runtime-main.js": "/speedforces/static/js/runtime-main.e77a7b72.js",
     "runtime-main.js.map": "/speedforces/static/js/runtime-main.e77a7b72.js.map",
     "static/js/2.6f368fa2.chunk.js": "/speedforces/static/js/2.6f368fa2.chunk.js",
     "static/js/2.6f368fa2.chunk.js.map": "/speedforces/static/js/2.6f368fa2.chunk.js.map",
     "index.html": "/speedforces/index.html",
-    "precache-manifest.03ee2279021f900561944284a2fbc172.js": "/speedforces/precache-manifest.03ee2279021f900561944284a2fbc172.js",
+    "precache-manifest.e0ca1ead8eda3e7310566cefab70f190.js": "/speedforces/precache-manifest.e0ca1ead8eda3e7310566cefab70f190.js",
     "service-worker.js": "/speedforces/service-worker.js",
-    "static/css/main.afe6ed15.chunk.css.map": "/speedforces/static/css/main.afe6ed15.chunk.css.map",
+    "static/css/main.368faaa3.chunk.css.map": "/speedforces/static/css/main.368faaa3.chunk.css.map",
     "static/js/2.6f368fa2.chunk.js.LICENSE.txt": "/speedforces/static/js/2.6f368fa2.chunk.js.LICENSE.txt",
     "static/media/index.css": "/speedforces/static/media/OpenSans-Regular.629a55a7.ttf",
     "static/media/logo.ico": "/speedforces/static/media/logo.3ef91830.ico"
@@ -18,7 +18,7 @@
   "entrypoints": [
     "static/js/runtime-main.e77a7b72.js",
     "static/js/2.6f368fa2.chunk.js",
-    "static/css/main.afe6ed15.chunk.css",
-    "static/js/main.2ae2ddb0.chunk.js"
+    "static/css/main.368faaa3.chunk.css",
+    "static/js/main.1a55bc26.chunk.js"
   ]
 }
