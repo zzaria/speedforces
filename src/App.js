@@ -19,6 +19,7 @@ class Text extends React.Component{
             userText: "",
             startTime: -1,
             done: 0,
+            lastTime: -1,
         }
     }
     componentDidMount(){
@@ -30,6 +31,7 @@ class Text extends React.Component{
         else if(this.state.startTime+60000<Date.now()) this.end();
     }
     end(){
+        if(this.state.lastTime==-1) this.setState({lastTime:(Date.now()-this.state.startTime)/1000});
         this.setState({done:1});
     }
     reset(type){
@@ -44,7 +46,7 @@ class Text extends React.Component{
         if(type=="code"){
             this.setState({text:this.state.codes[Math.floor(Math.random()*this.state.codes.length)]});
         }
-        this.setState({userText:"",startTime:-1,done:0});
+        this.setState({userText:"",startTime:-1,done:0,lastTime:-1});
     }
     setText(event){
         this.setState({text:event.target.value});
@@ -83,6 +85,7 @@ class Text extends React.Component{
             textOut=textOut.reverse(); userOut=userOut.reverse();
             return(
                 <div className="main">
+                    <p>Completed in {this.state.lastTime} seconds.</p>
                     <p>Correct characters typed: {cpm} ({cpm/5} words)</p>
                     <p>Total characters typed: {t.length-1} ({(t.length-1)/5} words)</p>
                     <p>Accuracy: {Math.round(10000*cpm/(t.length-1))/100}%</p>
