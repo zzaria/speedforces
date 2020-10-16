@@ -62,7 +62,8 @@ class Text extends React.Component{
     }
     render(){
         if(this.state.done){
-            var s='.'+this.state.text,t='.'+this.state.userText,dp=Array(s.length).fill().map(()=>Array(t.length)),pre=Array(s.length).fill().map(()=>Array(t.length)),userOut=[],textOut=[],cpm=0;
+            var s='.'+this.state.text,t='.'+this.state.userText,userOut=[],textOut=[],cpm=0;
+            var dp=Array(s.length).fill().map(()=>Array(t.length)),pre=Array(s.length).fill().map(()=>Array(t.length))
             dp[0][0]=[0,0];
             for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++) for(let k=0;k<2;k++){
                 if(k==0&&!(i==0&&j==0)){
@@ -82,8 +83,8 @@ class Text extends React.Component{
             for(let i=s.length-1,j=t.length-1,k=dp[i][j][0]>=dp[i][j][1]? 0:1,p=0;i>0||j>0;){
                 p=pre[i][j][k]%10; k=pre[i][j][k]>=10? 1:0;
                 if(p==0){
-                    textOut.push(<span className="highlight">{s[i]}</span>);
-                    userOut.push(<span className="highlight">{t[j]}</span>);
+                    textOut.push(<span className="highlight" key="i">{s[i]}</span>);
+                    userOut.push(<span className="highlight" key="i">{t[j]}</span>);
                     i--; j--; cpm++;
                 }
                 else if(p==1){
