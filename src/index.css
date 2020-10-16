@@ -113,6 +113,7 @@ footer a{
 	width:50%;
 	display: inline-block;
 	vertical-align: top;
+	white-space: pre-wrap;
 }
 .customtext{
 	height:18px;

@@ -69,8 +69,8 @@ class Text extends React.Component{
                 if(j>0&&dp[i][j]<dp[i][j-1]){
                     dp[i][j]=dp[i][j-1]; pre[i][j]=1;
                 }
-                if(i>0&&j>0&&s[i]==t[j]&&dp[i][j]<dp[i-1][j-1]+1){
-                    dp[i][j]=dp[i-1][j-1]+1; pre[i][j]=0;
+                if(i>0&&j>0&&s[i]==t[j]&&dp[i][j]<dp[i-1][j-1]+1-0.2*(pre[i-1][j-1]!=0)){
+                    dp[i][j]=dp[i-1][j-1]+1-0.2*(pre[i-1][j-1]!=0); pre[i][j]=0;
                 }
             }
             for(let i=s.length-1,j=t.length-1,p=0;i>0||j>0;){
