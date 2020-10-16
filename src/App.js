@@ -101,8 +101,8 @@ class Text extends React.Component{
             }
             else{
                 for(let ii=1,jj=1;ii<s.length;ii+=10){
-                    var s1='.'+s.substr(ii,10),t1='.'+t.substr(jj,15),textOut1=[],userOut1=[],first=1;
-                    var dp=Array(s1.length).fill().map(()=>Array(t1.length)),pre=Array(s1.length).fill().map(()=>Array(t1.length));
+                    let s1='.'+s.substr(ii,10),t1='.'+t.substr(jj,15),textOut1=[],userOut1=[],first=1;
+                    let dp=Array(s1.length).fill().map(()=>Array(t1.length)),pre=Array(s1.length).fill().map(()=>Array(t1.length));
                     dp[0][0]=[0,0];
                     for(let i=0;i<s1.length;i++) for(let j=0;j<t1.length;j++) for(let k=0;k<2;k++){
                         if(k==0&&!(i==0&&j==0)){
