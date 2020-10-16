@@ -60,21 +60,21 @@ class Text extends React.Component{
     }
     render(){
         if(this.state.done){
-            var s='.'+this.state.text,t='.'+this.state.userText,dp=Array(s.length).fill().map(()=>Array(t.length).fill(-1)),pre=Array(s.length).fill().map(()=>Array(t.length)),userOut=[],textOut=[],cpm=0;
-            dp[0][0]=0;
-            for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++){
-                if(i>0){
-                    dp[i][j]=dp[i-1][j]; pre[i][j]=2;
+            var s='.'+this.state.text,t='.'+this.state.userText,dp=Array(s.length).fill().map(()=>Array(t.length).fill().map(()=>Array(2).fill(-1e9))),pre=Array(s.length).fill().map(()=>Array(t.length).fill().map(()=>Array(2).fill(0))),userOut=[],textOut=[],cpm=0;
+            dp[0][0]=[0,0];
+            for(let i=0;i<s.length;i++) for(let j=0;j<t.length;j++) for(let k=0;k<2;k++){
+                if(i>0&&dp[i][j][0]<dp[i-1][j][k]){
+                    dp[i][j][0]=dp[i-1][j][k]; pre[i][j][0]=2+10*k;
                 }
-                if(j>0&&dp[i][j]<dp[i][j-1]){
-                    dp[i][j]=dp[i][j-1]; pre[i][j]=1;
+                if(j>0&&dp[i][j][0]<dp[i][j-1][k]){
+                    dp[i][j][0]=dp[i][j-1][k]; pre[i][j][0]=1+10*k;
                 }
-                if(i>0&&j>0&&s[i]==t[j]&&dp[i][j]<dp[i-1][j-1]+1-0.2*(pre[i-1][j-1]!=0)){
-                    dp[i][j]=dp[i-1][j-1]+1-0.2*(pre[i-1][j-1]!=0); pre[i][j]=0;
+                if(i>0&&j>0&&s[i]==t[j]&&dp[i][j][1]<dp[i-1][j-1][k]+1+(k-1)){
+                    dp[i][j][1]=dp[i-1][j-1][k]+1+(k-1); pre[i][j][1]=0+10*k;
                 }
             }
-            for(let i=s.length-1,j=t.length-1,p=0;i>0||j>0;){
-                p=pre[i][j];
+            for(let i=s.length-1,j=t.length-1,k=dp[i][j][0]>=dp[i][j][1]? 0:1,p=0;i>0||j>0;){
+                p=pre[i][j][k]%10; k=pre[i][j][k]>=10? 1:0;
                 if(p==0){
                     textOut.push(<span className="highlight">{s[i]}</span>);
                     userOut.push(<span className="highlight">{t[j]}</span>);
