@@ -176,7 +176,7 @@ class Text extends React.Component{
         }
         else return(
             <div>
-                <p>Instructions: type the text provided into the box below. Try to type as much as you can in one minute, or click the `Done` button if you finish early.</p>
+                <p>Instructions: type the text provided into the box below. Try to type as much as you can in the time limit, or click the `Done` button if you finish early.</p>
                 <hr/>
                 <div className="textbox">
                     <p>{this.state.text}</p>
