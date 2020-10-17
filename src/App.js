@@ -144,7 +144,7 @@ class Text extends React.Component{
                     }
                     textOut.push(textOut1.reverse()); userOut.push(userOut1.reverse());
                 }
-                for(;jj<t.length;jj++) textOut.push(<span key={jj}>{t[jj]}</span>);
+                for(;jj<t.length;jj++) userOut.push(<span key={jj}>{t[jj]}</span>);
             }
             return(
                 <div className="main">
