@@ -100,7 +100,8 @@ class Text extends React.Component{
                 textOut=textOut.reverse(); userOut=userOut.reverse();
             }
             else{
-                for(let ii=1,jj=1;ii<s.length;ii+=10){
+                var jj=1;
+                for(let ii=1;ii<s.length;ii+=10){
                     let s1='.'+s.substr(ii,10),t1='.'+t.substr(jj,15),textOut1=[],userOut1=[],first=1;
                     let dp=Array(s1.length).fill().map(()=>Array(t1.length)),pre=Array(s1.length).fill().map(()=>Array(t1.length));
                     dp[0][0]=[0,0];
@@ -143,7 +144,7 @@ class Text extends React.Component{
                     }
                     textOut.push(textOut1.reverse()); userOut.push(userOut1.reverse());
                 }
-
+                (;jj<t.length;jj++) textOut.push(<span key={jj}>{t[jj]}</span>);
             }
             return(
                 <div className="main">
