@@ -50,7 +50,7 @@ header a{
 }
 header img{
 	height:60px;
-	margin:0px 0px 0px 100px;
+	margin:0px;
 	float:right;
 }
 header h1{
@@ -100,7 +100,7 @@ footer a{
 .main{
 	margin:auto;
 	max-width:750px;
-	padding:70px 40px 30px 40px;
+	padding:70px 40px 40px 40px;
 }
 .input{
 	height: 15em;
@@ -128,7 +128,7 @@ label{
 	font-size: 14px;
 }
 select{
-	width:5em;
+	width:5.5em;
 }
 .textbox{
 	max-height: 400px;
