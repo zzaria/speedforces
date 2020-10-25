@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import logo from './assets/images/logo.ico'
+import logo from './assets/images/logo.png'
 
 class Text extends React.Component{
     constructor(props){
@@ -18,8 +18,10 @@ class Text extends React.Component{
             "const int N=100010,M=1e9+7;\r\n\r\ntypedef struct node* sp; //sp=splay tree\r\nstruct lazy{\r\n    int a,b;\r\n    operator bool() const{return !a||b;}\r\n};\r\nlazy operator+=(lazy& a,lazy& b){\r\n    a.a=a.a*b.a; a.b=a.b*b.a+b.b;\r\n    return a;\r\n}\r\nstruct Info{\r\n    int sz,sum,mi,ma;\r\n    Info(int v){\r\n        sz=1; sum=mi=ma=v;\r\n    }\r\n    Info(){\r\n        sz=sum=0; mi=inf; ma=-inf;\r\n    }\r\n};\r\nInfo& operator+=(Info& a,Info& b){\r\n    a.sz+=b.sz; a.sum+=b.sum; a.mi=min(a.mi,b.mi); a.ma=max(a.ma,b.ma);\r\n    return a;\r\n}\r\nInfo operator+=(Info& a,lazy& b){\r\n    if(!a.sz) return a;\r\n    a.sum=a.sum*b.a+a.sz*b.b; a.mi=a.mi*b.a+b.b; a.ma=a.ma*b.a+b.b;\r\n    return a;\r\n}\r\nint operator +=(int& a,lazy& b){\r\n    a=a*b.a+b.b;\r\n    return a;\r\n}\r\nstruct node{\r\n    int id,val;\r\n    sp p,c[5];\r\n    bool flip;\r\n    Info info[2];\r\n    lazy lz[2];\r\n    node(int i, int v){\r\n        id=i; val=v;\r\n        lz[0]=lz[1]={1,0}; info[0]=Info(val);\r\n        p=nullptr; fori(0,5) c[i]=nullptr;\r\n        flip=0;\r\n    }\r\n    void upd(lazy l){\r\n        lz[0]+=l; info[0]+=l; val+=l;\r\n    }\r\n    void upd2(lazy l){\r\n        lz[1]+=l; info[1]+=l;\r\n    }\r\n    void push(){\r\n        if(flip){\r\n            swap(c[0],c[1]);\r\n            fori(0,2) if(c[i]) c[i]->flip^=1;\r\n            flip=0;\r\n        }\r\n        if(lz[1]){\r\n            fori(0,5) if(c[i]){\r\n                c[i]->upd2(lz[1]);\r\n                if(i>=2) c[i]->upd(lz[1]);\r\n            }\r\n            lz[1]={1,0};\r\n        }\r\n        if(lz[0]){\r\n            fori(0,2) if(c[i]) c[i]->upd(lz[0]);\r\n            lz[0]={1,0};\r\n        }\r\n    }\r\n    void pull(){\r\n        info[0]=Info(val); info[1]=Info();\r\n        fori(0,5) if(c[i]){\r\n            info[1]+=c[i]->info[1];\r\n            info[i>=2]+=c[i]->info[0];\r\n        }\r\n    }\r\n    int dir(){\r\n        if(!p) return 5;\r\n        fori(0,5) if(p->c[i]==this) return i;\r\n    }\r\n    friend void connect(sp x,sp y,int d){\r\n        if(y) y->p=x;\r\n        if(d<5) x->c[d]=y;\r\n    }\r\n    void rot(){\r\n        int d = dir(); sp x=p;\r\n        connect(x->p,this,x->dir()); connect(x,c[d^1],d); connect(this,x,d^1);\r\n        x->pull(); pull();\r\n    }\r\n};\r\nvoid splay(sp x){\r\n    if(!x) return;\r\n    sp y;\r\n    while(x->dir()<2&&x->p->dir()<2&&x->p->p->dir()<2){\r\n        y=x->p; y->p->push(); y->push(); x->push();\r\n        x->dir()==y->dir()? y->rot(): x->rot();\r\n        x->rot();\r\n    }\r\n    if(x->dir()<2&&x->p->dir()<2) x->p->push(), x->push(), x->rot();\r\n    if(x->dir()<2) {\r\n        x->p->push(), x->push();\r\n        fori(2,4) if(x->p->c[i]) connect(x,x->p->c[i],i), x->p->c[i]=nullptr;\r\n        x->rot();\r\n    }\r\n    while(x->dir()<4){\r\n        y=x->p; if(y->p) y->p->push(); y->push(); x->push();\r\n        if(y->dir()<4) x->dir()==y->dir()? y->rot(): x->rot();\r\n        x->rot();\r\n    }\r\n    x->push();\r\n}\r\nsp splayRight(sp x){\r\n    while(x->c[3]) x=x->c[3];\r\n    splay(x); return x;\r\n}\r\nsp join(sp a,sp b){\r\n    if(!a) return b;\r\n    splay(a); a=splayRight(a);\r\n    connect(a,b,3); a->pull(); return a;\r\n}\r\nvoid access(sp x){\r\n    for(sp v=x,last=nullptr;v;v=v->p){\r\n        splay(v); auto c=v->c[1];\r\n        if(c) c->p=nullptr;\r\n        if(last){\r\n            last->push();\r\n            auto a=last->c[2],b=last->c[3];\r\n            if(a) a->p=nullptr;\r\n            if(b) b->p=nullptr;\r\n            last->c[2]=last->c[3]=nullptr; //last->pull();\r\n            connect(v,join(join(a,b),c),4);\r\n        }\r\n        else{\r\n            if(v->c[4]) v->c[4]->p=nullptr;\r\n            connect(v,join(c,v->c[4]),4);\r\n        }\r\n        v->c[1]=last; v->pull(); last=v;\r\n    }\r\n    splay(x);\r\n}\r\nvoid evert(sp x){\r\n    access(x);\r\n    x->flip^=1;\r\n}\r\nsp lca(sp x,sp y){\r\n    if(x==y) return x;\r\n    access(x); access(y);\r\n    if(!x->p) return nullptr;\r\n    splay(x); return x->p?:x;\r\n}\r\nvoid link(sp x,sp y){\r\n    if(lca(x,y)) return; //!need to access y!!\r\n    evert(x); connect(y,join(x,y->c[4]),4);// y->pull();\r\n}\r\nvoid cut(sp x){\r\n    access(x);\r\n    x->c[0]->p=nullptr; x->c[0]=nullptr; //x->pull();\r\n}\r\nsp lct[N];\r\n",
             "const int N=500001,M=1e9+7;\r\ntypedef struct node* tr; //tr=treap\r\nstruct node{\r\n    int v,p; tr c[2];\r\n    int sz,s,lz;\r\n    bool flip;\r\n    node(int val){\r\n        v=s=val; p=randint(0,1e9);\r\n        c[0]=c[1]=nullptr; sz=1; lz=inf; flip=false;\r\n    }\r\n    void upd(int val){\r\n        v=lz=val; s=val*sz;\r\n    }\r\n    friend int Sz(tr x){return x?x->sz:0;}\r\n    friend int S(tr x){return x?x->s:0;}\r\n    void push(){\r\n        if(flip){\r\n            swap(c[0],c[1]);\r\n            flip=0;\r\n            fori(0,2) c[i]->flip^=1;\r\n        }\r\n        if(lz!=inf){\r\n            fori(0,2) if(c[i]) c[i]->upd(lz);\r\n            lz=inf;\r\n        }\r\n    }\r\n    void pull(){\r\n        sz=1+Sz(c[0])+Sz(c[1]);\r\n        s=v+S(c[0])+S(c[1]);\r\n    }\r\n    friend tr push(tr x){if(x) x->push(); return x;}\r\n    friend tr pull(tr x){if(x) x->pull(); return x;}\r\n};\r\npair<tr,tr> split(tr cur,int v){ //nodes >=v to right\r\n    if(!cur) return{cur,cur};\r\n    push(cur);\r\n    if(cur->v>=v){\r\n        auto temp=split(cur->c[0],v); cur->c[0]=temp.ps;\r\n        return {temp.pf,pull(cur)};\r\n    }\r\n    auto temp=split(cur->c[1],v); cur->c[1]=temp.pf;\r\n    return {pull(cur),temp.ps};\r\n}\r\npair<tr,tr> isplit(tr cur,int ind){ //first ind nodes go left\r\n    if(!cur) return{cur,cur};\r\n    push(cur);\r\n    if(Sz(cur->c[0])>=ind){\r\n        auto temp=isplit(cur->c[0],ind); cur->c[0]=temp.ps;\r\n        return {temp.pf,pull(cur)};\r\n    }\r\n    else{\r\n        auto temp=isplit(cur->c[1],ind-Sz(cur->c[0])-1); cur->c[1]=temp.pf;\r\n        return {pull(cur),temp.ps};\r\n    }\r\n}\r\ntr merge(tr l,tr r){\r\n    if(!l||!r) return (l?pull(l):pull(r));\r\n    push(l); push(r);\r\n    if(l->p>r->p){\r\n        l->c[1]=merge(l->c[1],r);\r\n        return pull(l);\r\n    }\r\n    r->c[0]=merge(l,r->c[0]);\r\n    return pull(r);\r\n}\r\ntr ins(tr cur,int v){\r\n    auto a=split(cur,v),b=split(a.ps,v+1);\r\n    return merge(a.pf,merge(new node(v),b.ps));\r\n}\r\ntr del(tr cur,int v){\r\n    auto a=split(cur,v),b=split(a.ps,v+1);\r\n    return merge(a.pf,b.ps);\r\n}\r\nvoid del(tr cur){\r\n    if(!cur) return;\r\n    fori(0,2) del(cur->c[i]);\r\n    delete cur;\r\n}\r\nvoid tour(tr cur){\r\n    if(!cur) return;\r\n    push(cur); tour(cur->c[0]); tour(cur->c[1]); cout<<cur->v<<\" \";\r\n}\r\n",
             "const int N=P2(18),M=1e9+7;\r\nint n,m,a,b,c,sz[N],tot,ans;\r\nvector<int> gr[N];\r\nbool done[N];\r\n\r\nint szdfs(int v,int p){\r\n    sz[v]=1;\r\n    for(auto i:gr[v]) if(i!=p&&!done[i]) sz[v]+=szdfs(i,v);\r\n    return sz[v];\r\n}\r\nint getcentroid(int v,int p){\r\n    for(auto i:gr[v]) if(i!=p&&!done[i]&&sz[i]*2>tot) return getcentroid(i,v);\r\n    return v;\r\n}\r\nvoid dfs(int v,int p){ // for each centroid\r\n    for(auto i:gr[v]) if(i!=p&&!done[i]){\r\n        dfs(i,v);\r\n    }\r\n}\r\nvoid go(int v){ // for each centroid\r\n    tot=szdfs(v,-1); v=getcentroid(v,-1); done[v]=1;\r\n    for(auto i:gr[v]) if(!done[i]){\r\n        dfs(i,v);\r\n    }\r\n    for(auto i:gr[v]) if(!done[i]) go(i);\r\n}\r\n",
+            "const int N=100010,M=1e9+7;\r\nll n,fact[N];\r\nvoid init(){\r\n    fact[0]=0;\r\n    for(int i=1;i<N;i++) fact[i]=fact[i-1]*i%M; \r\n}\r\nll calc(int n,int k){\r\n	return fact[n]*fpow(fact[k],M-2)%M*fpow(fact[n-k],M-2)%M;\r\n}\r\n",
             ],
             words: ["the", "name", "of", "very", "to", "through", "and", "just", "form", "in", "much", "is", "great", "it", "think", "you", "say", "that", "help", "he", "low", "was", "line", "for", "before", "on", "turn", "are", "cause", "with", "same", "as", "mean", "differ", "his", "move", "they", "right", "be", "boy", "at", "old", "one", "too", "have", "does", "this", "tell", "from", "sentence", "or", "set", "had", "three", "by", "want", "hot", "air", "but", "well", "some", "also", "what", "play", "there", "small", "we", "end", "can", "put", "out", "home", "other", "read", "were", "hand", "all", "port", "your", "large", "when", "spell", "up", "add", "use", "even", "word", "land", "how", "here", "said", "must", "an", "big", "each", "high", "she", "such", "which", "follow", "do", "act", "their", "why", "time", "ask", "if", "men", "will", "change", "way", "went", "about", "light", "many", "kind", "then", "off", "them", "need", "would", "house", "write", "picture", "like", "try", "so", "us", "these", "again", "her", "animal", "long", "point", "make", "mother", "thing", "world", "see", "near", "him", "build", "two", "self", "has", "earth", "look", "father", "more", "head", "day", "stand", "could", "own", "go", "page", "come", "should", "did", "country", "my", "found", "sound", "answer", "no", "school", "most", "grow", "number", "study", "who", "still", "over", "learn", "know", "plant", "water", "cover", "than", "food", "call", "sun", "first", "four", "people", "thought", "may", "let", "down", "keep", "side", "eye", "been", "never", "now", "last", "find", "door", "any", "between", "new", "city", "work", "tree", "part", "cross", "take", "since", "get", "hard", "place", "start", "made", "might", "live", "story", "where", "saw", "after", "far", "back", "sea", "little", "draw", "only", "left", "round", "late", "man", "run", "year", "not", "came", "while", "show", "press", "every", "close", "good", "night", "me", "real", "give", "life", "our", "few", "under", "stop", "open", "ten", "seem", "simple", "together", "several", "next", "vowel", "white", "toward", "children", "war", "begin", "lay", "got", "against", "walk", "pattern", "example", "slow", "ease", "paper", "love", "often", "person", "always", "money", "music", "serve", "those", "appear", "both", "road", "mark", "map", "book", "science", "letter", "rule", "until", "govern", "mile", "pull", "river", "cold", "car", "notice", "feet", "voice", "care", "fall", "second", "power", "group", "town", "carry", "fine", "took", "certain", "rain", "fly", "eat", "unit", "room", "lead", "friend", "cry", "began", "dark", "idea", "machine", "fish", "note", "mountain", "wait", "north", "plan", "once", "figure", "base", "star", "hear", "box", "horse", "noun", "cut", "field", "sure", "rest", "watch", "correct", "able", "face", "pound", "wood", "done", "main", "beauty", "enough", "drive", "plain", "stood", "girl", "contain", "usual", "front", "young", "teach", "ready", "week", "above", "final", "ever", "gave", "red", "green", "list", "oh", "though", "quick", "feel", "develop", "talk", "sleep", "bird", "warm", "soon", "free", "body", "minute", "dog", "strong", "family", "special", "direct", "mind", "pose", "behind", "leave", "clear", "song", "tail", "measure", "produce", "state", "fact", "product", "street", "black", "inch", "short", "lot", "numeral", "nothing", "class", "course", "wind", "stay", "question", "wheel", "happen", "full", "complete", "force", "ship", "blue", "area", "object", "half", "decide", "rock", "surface", "order", "deep", "fire", "moon", "south", "island", "problem", "foot", "piece", "yet", "told", "busy", "knew", "test", "pass", "record", "farm", "boat", "top", "common", "whole", "gold", "king", "possible", "size", "plane", "heard", "age", "best", "dry", "hour", "wonder", "better", "laugh", "true", "thousand", "during", "ago", "hundred", "ran", "am", "check", "remember", "game", "step", "shape", "early", "yes", "hold", "hot", "west", "miss", "ground", "brought", "interest", "heat", "reach", "snow", "fast", "bed", "five", "bring", "sing", "sit", "listen", "perhaps", "six", "fill", "table", "east", "travel", "weight", "less", "language", "morning", "among", "speed", "typing", "mineral", "seven", "eight", "nine", "everything", "something", "standard", "distant", "paint"],
+            textChoice: -1,
             text: "",
             userText: "",
             startTime: -1,
@@ -29,7 +31,12 @@ class Text extends React.Component{
         }
     }
     componentDidMount(){
-        this.reset("random");
+    	let params = new URLSearchParams(window.location.search);
+    	if(params.get('text')){
+    		this.state.textChoice=parseInt(params.get('text'));
+    		this.reset("code");
+    	}
+        else this.reset("random");
     }
     start(event){
         this.setState({userText:event.target.value});
@@ -46,11 +53,11 @@ class Text extends React.Component{
             for(let i=0;i<300;i++) s=s+this.state.words[Math.floor(Math.random()*this.state.words.length)]+" ";
             this.setState({text:s});
         }
-        if(type=="text"){
+        if(type=="exerpt"){
             this.setState({text:this.state.texts[Math.floor(Math.random()*this.state.texts.length)]});
         }
         if(type=="code"){
-            this.setState({text:this.state.codes[Math.floor(Math.random()*this.state.codes.length)]});
+            this.setState({text:this.state.codes[this.state.textChoice==-1? Math.floor(Math.random()*this.state.codes.length): this.state.textChoice]});
         }
         this.setState({userText:"",startTime:-1,done:0,lastTime:-1});
     }
@@ -59,6 +66,9 @@ class Text extends React.Component{
     }
     setTL(event){
         this.setState({tl:event.target.value});
+    }
+    setTextChoice(event){
+    	this.setState({textChoice:event.target.value});
     }
     render(){
         if(this.state.done){
@@ -162,11 +172,23 @@ class Text extends React.Component{
                         {userOut}
                     </div>
                     <p>Note: if your text is over 2048 characters the matching algorithm may be less accurate to improve speed</p>
-                    <hr/>
-                    <button onClick={()=> this.reset()}>Reset</button>
-                    <button onClick={()=> this.reset("random")}>Random Words</button>
-                    <button onClick={()=> this.reset("text")}>Text</button>
-                    <button onClick={()=> this.reset("code")}>Code</button>
+	                <hr/>
+	                <button onClick={()=> this.reset()}>Reset</button>
+	                <button onClick={()=> this.reset("random")}>Words</button>
+	                <button onClick={()=> this.reset("exerpt")}>Exerpt</button>
+	                <label>
+	                	<button onClick={()=> this.reset("code")}>Code</button>
+	                    <select onChange={(event) => this.setTextChoice(event)}>
+	                        <option value="-1">random</option>
+	                        <option value="0">bit</option>
+	                        <option value="1">dsu</option>
+	                        <option value="2">seg</option>
+	                        <option value="3">top</option>
+	                        <option value="4">treap</option>
+	                        <option value="5">centroid decomp</option>
+	                        <option value="6">choose</option>
+	                    </select>
+	                </label>
                     <label>
                         <button onClick={()=> this.reset()}>Custom</button>
                         <textarea className="customtext" value={this.state.text} onChange={(event) => this.setText(event)}/>
@@ -183,9 +205,21 @@ class Text extends React.Component{
                 </div>
                 <hr/>
                 <button onClick={()=> this.reset()}>Reset</button>
-                <button onClick={()=> this.reset("random")}>Random Words</button>
-                <button onClick={()=> this.reset("text")}>Text</button>
-                <button onClick={()=> this.reset("code")}>Code</button>
+                <button onClick={()=> this.reset("random")}>Words</button>
+                <button onClick={()=> this.reset("exerpt")}>Exerpt</button>
+                <label>
+                	<button onClick={()=> this.reset("code")}>Code</button>
+                    <select onChange={(event) => this.setTextChoice(event)}>
+                        <option value="-1">random</option>
+                        <option value="0">bit</option>
+                        <option value="1">dsu</option>
+                        <option value="2">seg</option>
+                        <option value="3">top</option>
+                        <option value="4">treap</option>
+                        <option value="5">centroid decomp</option>
+                        <option value="6">choose</option>
+                    </select>
+                </label>
                 <label>
                     Custom
                     <textarea className="customtext" value={this.state.text} onChange={(event) => this.setText(event)}/>

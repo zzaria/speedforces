@@ -126,7 +126,9 @@ footer a{
 }
 label{
 	font-size: 14px;
-	padding:0px 5px;
+}
+select{
+	width:5em;
 }
 .textbox{
 	max-height: 400px;
