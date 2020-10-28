@@ -178,7 +178,7 @@ class Text extends React.Component{
 	                <button onClick={()=> this.reset("exerpt")}>Exerpt</button>
 	                <label>
 	                	<button onClick={()=> this.reset("code")}>Code</button>
-	                    <select onChange={(event) => this.setTextChoice(event)}>
+	                    <select value={this.state.textChoice} onChange={(event) => this.setTextChoice(event)}>
 	                        <option value="-1">random</option>
 	                        <option value="0">bit</option>
 	                        <option value="1">dsu</option>
@@ -209,7 +209,7 @@ class Text extends React.Component{
                 <button onClick={()=> this.reset("exerpt")}>Exerpt</button>
                 <label>
                 	<button onClick={()=> this.reset("code")}>Code</button>
-                    <select onChange={(event) => this.setTextChoice(event)}>
+                    <select value={this.state.textChoice} onChange={(event) => this.setTextChoice(event)}>
                         <option value="-1">random</option>
                         <option value="0">bit</option>
                         <option value="1">dsu</option>
