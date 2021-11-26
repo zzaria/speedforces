@@ -251,14 +251,14 @@ class App extends React.Component {
           <div>
             <header>
               <h1><a href="index.html">Speedforces</a></h1>
-              <a href="https://aaerialys.me"><img src={logo} alt="logo" /></a>
+              <a href="https://aaeria.me"><img src={logo} alt="logo" /></a>
             </header>
             <div className="main">
                 <Text/>
             </div>
             <footer>
               <div className="bottom">
-                <p>2020 | <a href="https://aaerialys.me">Aaerialys</a></p>
+                <p>2020 | <a href="https://aaeria.me">Aaeria</a></p>
               </div>
             </footer>
           </div>
